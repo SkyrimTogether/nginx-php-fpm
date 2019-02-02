@@ -1,4 +1,4 @@
-FROM php:7.1.12-fpm-alpine
+FROM php:7.1-fpm-alpine
 
 LABEL maintainer="Ric Harvey <ric@ngd.io>"
 
@@ -6,11 +6,11 @@ ENV php_conf /usr/local/etc/php-fpm.conf
 ENV fpm_conf /usr/local/etc/php-fpm.d/www.conf
 ENV php_vars /usr/local/etc/php/conf.d/docker-vars.ini
 
-ENV NGINX_VERSION 1.13.7
+ENV NGINX_VERSION 1.15.8
 ENV LUA_MODULE_VERSION 0.10.11
 ENV DEVEL_KIT_MODULE_VERSION 0.3.0
 ENV LUAJIT_LIB=/usr/lib
-ENV LUAJIT_INC=/usr/include/luajit-2.0
+ENV LUAJIT_INC=/usr/include/luajit-2.1
 
 # resolves #166
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
@@ -240,11 +240,11 @@ RUN echo "cgi.fix_pathinfo=0" > ${php_vars} &&\
     echo "memory_limit = 128M"  >> ${php_vars} && \
     sed -i \
         -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" \
-        -e "s/pm.max_children = 5/pm.max_children = 4/g" \
-        -e "s/pm.start_servers = 2/pm.start_servers = 3/g" \
-        -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 2/g" \
-        -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 4/g" \
-        -e "s/;pm.max_requests = 500/pm.max_requests = 200/g" \
+        -e "s/pm.max_children = 5/pm.max_children = 20/g" \
+        -e "s/pm.start_servers = 2/pm.start_servers = 10/g" \
+        -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 5/g" \
+        -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 15/g" \
+        -e "s/;pm.max_requests = 500/pm.max_requests = 1000/g" \
         -e "s/user = www-data/user = nginx/g" \
         -e "s/group = www-data/group = nginx/g" \
         -e "s/;listen.mode = 0660/listen.mode = 0666/g" \
